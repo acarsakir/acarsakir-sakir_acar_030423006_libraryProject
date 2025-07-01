@@ -1,0 +1,48 @@
+# Ubuntu Systemd Service
+# Dosya: /etc/systemd/system/library-system.service
+
+[Unit]
+Description=Library Management System - Next.js Application
+Documentation=https://github.com/yourusername/library-system
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/library-system
+
+# Environment variables
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/var/www/library-system/.env.local
+
+# Execution
+ExecStart=/usr/bin/npm start
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=60s
+StartLimitBurst=3
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/library-system
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=library-system
+
+[Install]
+WantedBy=multi-user.target
